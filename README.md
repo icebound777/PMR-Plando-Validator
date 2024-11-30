@@ -59,4 +59,5 @@ Notes:
 
 * Setting the difficulty for chapter 8 is currently not possible
 * Setting a chapter difficulty to `null`, or excluding a given chapter entirely, results in the seed generator setting the difficulty itself according to given settings
+* Will cause a warning if the difficulties of chapters 1, 2 or 5 are manually set to a value above 3, as these are available starting locations a player may find difficult to deal with when scaled too highly
 * The difficulty section gets ignored if the `Progressive Scaling` option is active
