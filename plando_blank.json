@@ -7,5 +7,327 @@
         "chapter 5": 5,
         "chapter 6": 6,
         "chapter 7": 7
+    },
+    "move_costs": {
+        "badge": {
+            "AllorNothing": {
+                "BP": null
+            },
+            "AutoJump": {
+                "BP": null,
+                "FP": null
+            },
+            "AutoSmash": {
+                "BP": null,
+                "FP": null
+            },
+            "Autobounce": {
+                "BP": null,
+                "FP": null
+            },
+            "Berserker": {
+                "BP": null
+            },
+            "BumpAttack": {
+                "BP": null
+            },
+            "ChillOut": {
+                "BP": null
+            },
+            "CloseCall": {
+                "BP": null
+            },
+            "CrazyHeart": {
+                "BP": null
+            },
+            "DDownJump": {
+                "BP": null,
+                "FP": null
+            },
+            "DDownPound": {
+                "BP": null,
+                "FP": null
+            },
+            "DamageDodge": {
+                "BP": null
+            },
+            "DeepFocus": {
+                "BP": null
+            },
+            "DefendPlus": {
+                "BP": null
+            },
+            "DizzyAttack": {
+                "BP": null
+            },
+            "DizzyStomp": {
+                "BP": null,
+                "FP": null
+            },
+            "DodgeMaster": {
+                "BP": null
+            },
+            "DoubleDip": {
+                "BP": null,
+                "FP": null
+            },
+            "FPPlus": {
+                "BP": null
+            },
+            "FeelingFine": {
+                "BP": null
+            },
+            "FireShield": {
+                "BP": null
+            },
+            "FirstAttack": {
+                "BP": null
+            },
+            "FlowerFanatic": {
+                "BP": null
+            },
+            "FlowerFinder": {
+                "BP": null
+            },
+            "FlowerSaver": {
+                "BP": null
+            },
+            "GroupFocus": {
+                "BP": null
+            },
+            "HPDrain": {
+                "BP": null
+            },
+            "HPPlus": {
+                "BP": null
+            },
+            "HammerThrow": {
+                "BP": null,
+                "FP": null
+            },
+            "HappyFlower": {
+                "BP": null
+            },
+            "HappyHeart": {
+                "BP": null
+            },
+            "HealthyHealthy": {
+                "BP": null
+            },
+            "HeartFinder": {
+                "BP": null
+            },
+            "ISpy": {
+                "BP": null
+            },
+            "IcePower": {
+                "BP": null
+            },
+            "JumpCharge": {
+                "BP": null,
+                "FP": null
+            },
+            "LastStand": {
+                "BP": null
+            },
+            "LuckyDay": {
+                "BP": null
+            },
+            "MegaHPDrain": {
+                "BP": null
+            },
+            "MegaJump": {
+                "BP": null,
+                "FP": null
+            },
+            "MegaQuake": {
+                "BP": null,
+                "FP": null
+            },
+            "MegaRush": {
+                "BP": null
+            },
+            "MegaSmash": {
+                "BP": null,
+                "FP": null
+            },
+            "MiniJumpCharge": {
+                "BP": null,
+                "FP": null
+            },
+            "MiniSmashCharge": {
+                "BP": null,
+                "FP": null
+            },
+            "MoneyMoney": {
+                "BP": null
+            },
+            "Multibounce": {
+                "BP": null,
+                "FP": null
+            },
+            "PDownDUp": {
+                "BP": null
+            },
+            "PUpDDown": {
+                "BP": null
+            },
+            "PayOff": {
+                "BP": null
+            },
+            "Peekaboo": {
+                "BP": null
+            },
+            "PowerBounce": {
+                "BP": null,
+                "FP": null
+            },
+            "PowerJump": {
+                "BP": null,
+                "FP": null
+            },
+            "PowerPlus": {
+                "BP": null
+            },
+            "PowerQuake": {
+                "BP": null,
+                "FP": null
+            },
+            "PowerRush": {
+                "BP": null
+            },
+            "PowerSmash": {
+                "BP": null,
+                "FP": null
+            },
+            "PrettyLucky": {
+                "BP": null
+            },
+            "QuakeBounce": {
+                "BP": null,
+                "FP": null
+            },
+            "QuakeHammer": {
+                "BP": null,
+                "FP": null
+            },
+            "QuickChange": {
+                "BP": null
+            },
+            "Refund": {
+                "BP": null
+            },
+            "RightOn": {
+                "BP": null
+            },
+            "RunawayPay": {
+                "BP": null
+            },
+            "ShrinkSmash": {
+                "BP": null,
+                "FP": null
+            },
+            "ShrinkStomp": {
+                "BP": null,
+                "FP": null
+            },
+            "SleepStomp": {
+                "BP": null,
+                "FP": null
+            },
+            "SmashCharge": {
+                "BP": null,
+                "FP": null
+            },
+            "SpeedySpin": {
+                "BP": null
+            },
+            "SpikeShield": {
+                "BP": null
+            },
+            "SpinAttack": {
+                "BP": null
+            },
+            "SpinSmash": {
+                "BP": null,
+                "FP": null
+            },
+            "SuperFocus": {
+                "BP": null
+            },
+            "SuperJump": {
+                "BP": null,
+                "FP": null
+            },
+            "SuperJumpCharge": {
+                "BP": null,
+                "FP": null
+            },
+            "SuperSmash": {
+                "BP": null,
+                "FP": null
+            },
+            "SuperSmashCharge": {
+                "BP": null,
+                "FP": null
+            },
+            "TripleDip": {
+                "BP": null,
+                "FP": null
+            },
+            "ZapTap": {
+                "BP": null
+            }
+        },
+        "partner": {
+            "Goombario": {
+                "Charge": null,
+                "Multibonk": null
+            },
+            "Kooper": {
+                "PowerShell": null,
+                "DizzyShell": null,
+                "FireShell": null
+            },
+            "Bombette": {
+                "Bomb": null,
+                "PowerBomb": null,
+                "MegaBomb": null
+            },
+            "Parakarry": {
+                "ShellShot": null,
+                "AirLift": null,
+                "AirRaid": null
+            },
+            "Bow": {
+                "OuttaSight": null,
+                "Spook": null,
+                "FanSmack": null
+            },
+            "Watt": {
+                "PowerShock": null,
+                "TurboCharge": null,
+                "MegaShock": null
+            },
+            "Sushie": {
+                "Squirt": null,
+                "WaterBlock": null,
+                "TidalWave": null
+            },
+            "Lakilester": {
+                "SpinySurge": null,
+                "CloudNine": null,
+                "Hurricane": null
+            }
+        },
+        "starpower": {
+            "Refresh": null,
+            "Lullaby": null,
+            "StarStorm": null,
+            "ChillOut": null,
+            "Smooch": null,
+            "TimeOut": null,
+            "UpAndAway": null
+        }
     }
 }
