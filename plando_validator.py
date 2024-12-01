@@ -60,7 +60,7 @@ def validate_from_dict(
             messages_wrn.append(f"Plando data includes unhandled top level field: \"{k}\"")
 
         elif k == TOPLEVEL_FIELD_DIFFICULTY:
-            if not isinstance(plando_data[k], dict):
+            if plando_data[k] is not None and not isinstance(plando_data[k], dict):
                 messages_err.append(f"Top-level key has wrong data type (expected dict or null): \"{plando_data[k]}\" ({type(plando_data[k])})")
                 continue
             difficulties, new_wrns, new_errs = _get_difficulty(plando_data[k])
