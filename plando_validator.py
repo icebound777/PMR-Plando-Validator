@@ -60,6 +60,9 @@ def validate_from_dict(
             messages_wrn.append(f"Plando data includes unhandled top level field: \"{k}\"")
 
         elif k == TOPLEVEL_FIELD_DIFFICULTY:
+            if not isinstance(plando_data[k], dict):
+                messages_err.append(f"Top-level key has wrong data type (expected dict or null): \"{plando_data[k]}\" ({type(plando_data[k])})")
+                continue
             difficulties, new_wrns, new_errs = _get_difficulty(plando_data[k])
 
             parsed_data[TOPLEVEL_FIELD_DIFFICULTY] = difficulties
@@ -73,7 +76,7 @@ def validate_from_dict(
 
 
 def _get_difficulty(
-    difficulties: dict[str, int]
+    difficulties: dict[str, int] | None
 ) -> tuple[dict[int, int], list[str], list[str]]:
     """
     Validates and parses chapter difficulties.
@@ -87,6 +90,9 @@ def _get_difficulty(
     parsed_difficulties: dict[int, int] = dict()
     new_wrns: list[str] = list()
     new_errs: list[str] = list()
+
+    if difficulties is None:
+        return parsed_difficulties, new_wrns, new_errs
 
     allowed_keys = [
         "chapter 1",
