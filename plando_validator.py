@@ -2,11 +2,13 @@
 Validator module for the Paper Mario Randomizer plandomizer file.
 """
 
+from functools import reduce
 import json
 
 
 TOPLEVEL_FIELD_DIFFICULTY = "difficulty"
 TOPLEVEL_FIELD_MOVE_COSTS = "move_costs"
+TOPLEVEL_FIELD_BOSS_BATTLES = "boss_battles"
 
 
 def validate_from_filepath(
@@ -42,6 +44,7 @@ def validate_from_dict(
     implemented_toplevel_fields: list[str] = [
         TOPLEVEL_FIELD_DIFFICULTY,
         TOPLEVEL_FIELD_MOVE_COSTS,
+        TOPLEVEL_FIELD_BOSS_BATTLES,
     ]
 
     messages["warnings"] = list()
@@ -78,6 +81,16 @@ def validate_from_dict(
             move_costs, new_wrns, new_errs = _get_move_costs(plando_data[k])
 
             parsed_data[TOPLEVEL_FIELD_MOVE_COSTS] = move_costs
+            messages_wrn.extend(new_wrns)
+            messages_err.extend(new_errs)
+
+        elif k == TOPLEVEL_FIELD_BOSS_BATTLES:
+            if plando_data[k] is not None and not isinstance(plando_data[k], dict):
+                messages_err.append(f"Top-level key has wrong data type (expected dict or null): \"{plando_data[k]}\" ({type(plando_data[k])})")
+                continue
+            boss_battles, new_wrns, new_errs = _get_boss_battles(plando_data[k])
+
+            parsed_data[TOPLEVEL_FIELD_BOSS_BATTLES] = boss_battles
             messages_wrn.extend(new_wrns)
             messages_err.extend(new_errs)
 
@@ -440,3 +453,77 @@ def _get_move_costs(
                     parsed_move_costs[k][starpower_name]["FP"] = starpower_cost
 
     return parsed_move_costs, new_wrns, new_errs
+
+
+def _get_boss_battles(
+    boss_battles: dict[str, str] | None
+) -> tuple[dict[int, int], list[str], list[str]]:
+    """
+    Validates and parses boss battles.
+    The allowed chapters to set are ch1-ch7m and the allowed bosses are Koopa
+    Bros., Tutankoopa, Tubba's Heart, General Guy, Lava Piranha, Huff n Puff,
+    and Crystal King.
+    Warnings are caused by: Valid but disallowed keys (get ignored), setting any
+    boss at all (due to scaling oddities when bosses appear multiple times)
+    Errors are caused by: Wrong datatypes for keys or values, setting a
+    boss that's not recognized
+    """
+    parsed_boss_battles: dict[int, int] = dict()
+
+    new_wrns: list[str] = list()
+    new_errs: list[str] = list()
+
+    if boss_battles is None:
+        return parsed_boss_battles, new_wrns, new_errs
+
+    allowed_keys = [
+        "chapter 1",
+        "chapter 2",
+        "chapter 3",
+        "chapter 4",
+        "chapter 5",
+        "chapter 6",
+        "chapter 7",
+    ]
+    allowed_values = [
+        "KoopaBros",
+        "Tutankoopa",
+        "TubbasHeart",
+        "GeneralGuy",
+        "LavaPiranha",
+        "HuffNPuff",
+        "CrystalKing",
+    ]
+
+    for k, v in boss_battles.items():
+        # Check datatypes for key and value
+        new_err_found = False
+        if not isinstance(k, str):
+            new_errs.append(f"boss_battles: key has wrong data type (expected str): \"{k}\" ({type(k)})")
+            new_err_found = True
+        if v is not None and not isinstance(v, str):
+            new_errs.append(f"boss_battles: value has wrong data type (expected str or null): \"{v}\" ({type(v)})")
+            new_err_found = True
+        if new_err_found:
+            continue
+
+        # Check if key and value are in allowed ranges
+        if k not in allowed_keys:
+            new_wrns.append(f"boss_battles: found unexpected Key: \"{k}\" (not one of {allowed_keys=})")
+            continue
+        if v is not None and v not in allowed_values:
+            new_errs.append(f"boss_battles: found disallowed Value: {v} (not one of {allowed_values=} or null)")
+            continue
+
+        # Check if value is unset
+        if v is None:
+            continue
+
+        parsed_boss_battles[int(k[-1:])] = allowed_values.index(v) + 1
+
+    if parsed_boss_battles and len(set(list(parsed_boss_battles.values()))) != 7:
+        new_wrns.append(f"boss_battles: not all 7 bosses are plando'd. "
+            "Beware of scaling oddities if a boss appears multiple times if progressive scaling is turned off"
+        )
+
+    return parsed_boss_battles, new_wrns, new_errs

@@ -8,6 +8,15 @@
         "chapter 6": 6,
         "chapter 7": 7
     },
+    "boss_battles": {
+        "chapter 1": "KoopaBros",
+        "chapter 2": "Tutankoopa",
+        "chapter 3": "TubbasHeart",
+        "chapter 4": "GeneralGuy",
+        "chapter 5": "LavaPiranha",
+        "chapter 6": "HuffNPuff",
+        "chapter 7": "CrystalKing"
+    },
     "move_costs": {
         "badge": {
             "AllorNothing": {

@@ -38,6 +38,7 @@ The returned data can then be handed to the seed generator.
 At the top level, the following fields are allowed:
 
 * `"difficulty"`
+* `"boss_battles"`
 * `"move_costs"`
 
 Every other top level field gets ignored during parsing, and gets logged as a warning.
@@ -62,6 +63,29 @@ Notes:
 * Setting a chapter difficulty to `null`, or excluding a given chapter entirely, results in the seed generator setting the difficulty itself according to given settings
 * Will cause a warning if the difficulties of chapters 1, 2 or 5 are manually set to a value above 3, as these are available starting locations a player may find difficult to deal with when scaled too highly
 * The difficulty section gets ignored if the `Progressive Scaling` option is active
+
+### Boss Battles
+
+Type: key-value-pairs
+Schema: `"chapter X": "Y"`
+Values:
+
+* `X`: chapter to set the boss battle for. Allowed range: `1-7`
+* `Y`: boss battle to set. Allowed values:
+  * `KoopaBros`
+  * `Tutankoopa`
+  * `TubbasHeart`
+  * `GeneralGuy`
+  * `LavaPiranha`
+  * `HuffNPuff`
+  * `CrystalKing`
+  * `null`
+
+Example: `"chapter 1": "Tutankoopa", chapter 2: "HuffNPuff", chapter 4: null`
+Notes:
+
+* Setting a chapter's boss to `null`, or excluding a given chapter entirely, results in the seed generator setting the boss battle itself according to given settings
+* Placing any boss at all will cause a warning, unless you set all bosses and use each boss exactly once. This is due to the possibility of having a boss appear multiple times in the same seed, which is dependent on the settings. This should work just fine during `Progressive Scaling`, but may behave weirdly with any other difficulty setting
 
 ### Move Costs
 
