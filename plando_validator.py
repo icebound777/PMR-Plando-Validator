@@ -9,6 +9,7 @@ import json
 TOPLEVEL_FIELD_DIFFICULTY = "difficulty"
 TOPLEVEL_FIELD_MOVE_COSTS = "move_costs"
 TOPLEVEL_FIELD_BOSS_BATTLES = "boss_battles"
+TOPLEVEL_FIELD_REQUIRED_SPIRITS = "required_spirits"
 
 
 def validate_from_filepath(
@@ -45,6 +46,7 @@ def validate_from_dict(
         TOPLEVEL_FIELD_DIFFICULTY,
         TOPLEVEL_FIELD_MOVE_COSTS,
         TOPLEVEL_FIELD_BOSS_BATTLES,
+        TOPLEVEL_FIELD_REQUIRED_SPIRITS,
     ]
 
     messages["warnings"] = list()
@@ -91,6 +93,16 @@ def validate_from_dict(
             boss_battles, new_wrns, new_errs = _get_boss_battles(plando_data[k])
 
             parsed_data[TOPLEVEL_FIELD_BOSS_BATTLES] = boss_battles
+            messages_wrn.extend(new_wrns)
+            messages_err.extend(new_errs)
+
+        elif k == TOPLEVEL_FIELD_REQUIRED_SPIRITS:
+            if plando_data[k] is not None and not isinstance(plando_data[k], list):
+                messages_err.append(f"Top-level key has wrong data type (expected list or null): \"{plando_data[k]}\" ({type(plando_data[k])})")
+                continue
+            required_spirits, new_wrns, new_errs = _get_required_spirits(plando_data[k])
+
+            parsed_data[TOPLEVEL_FIELD_REQUIRED_SPIRITS] = required_spirits
             messages_wrn.extend(new_wrns)
             messages_err.extend(new_errs)
 
@@ -460,7 +472,7 @@ def _get_boss_battles(
 ) -> tuple[dict[int, int], list[str], list[str]]:
     """
     Validates and parses boss battles.
-    The allowed chapters to set are ch1-ch7m and the allowed bosses are Koopa
+    The allowed chapters to set are ch1-ch7, and the allowed bosses are Koopa
     Bros., Tutankoopa, Tubba's Heart, General Guy, Lava Piranha, Huff n Puff,
     and Crystal King.
     Warnings are caused by: Valid but disallowed keys (get ignored), setting any
@@ -527,3 +539,77 @@ def _get_boss_battles(
         )
 
     return parsed_boss_battles, new_wrns, new_errs
+
+
+def _get_required_spirits(
+    required_spirits: list[str | int] | None
+) -> tuple[list[int], list[str], list[str]]:
+    """
+    Validates and parses specific spirits to save for opening Star Way.
+    Any of the seven star spirits can be set, with the allowed values of
+    Eldstar, Mamar, Skolar, Muskular, Misstar, Klevar, and Kalmer, or just
+    using the chapter numbers.
+    Warnings are caused by: Valid but duplicate keys (get ignored), setting all
+    seven spirits (turns off ``Require Specific Spirits``), setting any spirit
+    at all (due to interactions with ``Require Specific Spirits`` and
+    ``Star Way Spirits Needed`` that the user should be aware of)
+    Errors are caused by: Wrong datatypes for keys or values, setting a
+    star spirit that's not recognized
+    """
+    parsed_required_spirits: list[int] = list()
+
+    new_wrns: list[str] = list()
+    new_errs: list[str] = list()
+
+    if required_spirits is None:
+        return parsed_required_spirits, new_wrns, new_errs
+
+    allowed_values: dict[str | int, int] = {
+        "Eldstar": 1,
+        "Mamar": 2,
+        "Skolar": 3,
+        "Muskular": 4,
+        "Misstar": 5,
+        "Klevar": 6,
+        "Kalmar": 7,
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 5,
+        6: 6,
+        7: 7,
+    }
+
+    for k in required_spirits:
+        # Check if value is unset
+        if k is None:
+            continue
+
+        # Check datatypes for key
+        if not isinstance(k, str) and not isinstance(k, int):
+            new_errs.append(f"required_spirits: key has wrong data type (expected str or int): \"{k}\" ({type(k)})")
+            continue
+
+        # Check if key is in allowed ranges
+        if k not in allowed_values:
+            new_errs.append(f"required_spirits: found unexpected key: \"{k}\" (not one of {allowed_values.keys()=})")
+            continue
+
+        if allowed_values[k] in parsed_required_spirits:
+            new_wrns.append(f"required_spirits: spirit number \"{allowed_values[k]}\" set multiple times, ignoring")
+        else:
+            parsed_required_spirits.append(allowed_values[k])
+
+    if len(parsed_required_spirits) >= 7:
+        new_wrns.append(f"required_spirits: all spirits required, this will turn off 'Require Specific Spirits'")
+    if len(parsed_required_spirits) > 0:
+        new_wrns.append(
+            f"required_spirits: spirits are set, this will overrule 'Star Way Spirits Needed' "
+            f"if more spirits are set than needed for Star Way. Set spirits will be ignored if "
+            f"'Require Specific Spirits' is turned off"
+        )
+
+    parsed_required_spirits.sort()
+
+    return parsed_required_spirits, new_wrns, new_errs

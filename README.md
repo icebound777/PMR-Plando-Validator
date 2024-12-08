@@ -39,6 +39,7 @@ At the top level, the following fields are allowed:
 
 * `"difficulty"`
 * `"boss_battles"`
+* `"required_spirits"`
 * `"move_costs"`
 
 Every other top level field gets ignored during parsing, and gets logged as a warning.
@@ -86,6 +87,23 @@ Notes:
 
 * Setting a chapter's boss to `null`, or excluding a given chapter entirely, results in the seed generator setting the boss battle itself according to given settings
 * Placing any boss at all will cause a warning, unless you set all bosses and use each boss exactly once. This is due to the possibility of having a boss appear multiple times in the same seed, which is dependent on the settings. This should work just fine during `Progressive Scaling`, but may behave weirdly with any other difficulty setting
+
+### Required Spirits
+
+Type: list
+Schema: `"X"` (string) or `X` (number)
+Values:
+
+* `"X"`: name of star spirit. Allowed values: `"Eldstar", "Mamar", "Skolar", "Muskular", "Misstar", "Klevar", "Kalmar"`
+* alternatively: `X`: number of chapter. Allowed range: `1-7`
+
+Examples: `"Mamar", "Muskular", "Kalmar"`, `2, 4, 7`, `"Mamar", "Muskular", 7`
+Notes:
+
+* The required spirits get ignored if the seed settings don't set `Require Specific Spirits`, or if all 7 spirits are set as required
+* Will always cause a warning, as having `Require Specific Spirits` active and setting more spirits here than are required to open Star Way will have the spirits set here overwrite the number of spirits required for Star Way
+* Will cause a warning if all 7 spirits are set as required
+* Will cause a warning if the same spirit is set multiple times
 
 ### Move Costs
 

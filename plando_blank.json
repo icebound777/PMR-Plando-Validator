@@ -17,6 +17,15 @@
         "chapter 6": "HuffNPuff",
         "chapter 7": "CrystalKing"
     },
+    "required_spirits": [
+        "Eldstar",
+        "Mamar",
+        "Skolar",
+        "Muskular",
+        "Misstar",
+        "Klevar",
+        "Kalmar"
+    ],
     "move_costs": {
         "badge": {
             "AllorNothing": {
