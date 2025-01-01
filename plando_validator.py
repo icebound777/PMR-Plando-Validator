@@ -3,13 +3,26 @@ Validator module for the Paper Mario Randomizer plandomizer file.
 """
 
 from functools import reduce
+import re
 import json
+
+from .plando_metadata import (
+    allowed_locations,
+    shop_locations,
+    disallowed_shop_locations,
+    allowed_items,
+    block_locations,
+    limited_items,
+    progressive_badges,
+    forbidden_trap_locations,
+)
 
 
 TOPLEVEL_FIELD_DIFFICULTY = "difficulty"
 TOPLEVEL_FIELD_MOVE_COSTS = "move_costs"
 TOPLEVEL_FIELD_BOSS_BATTLES = "boss_battles"
 TOPLEVEL_FIELD_REQUIRED_SPIRITS = "required_spirits"
+TOPLEVEL_FIELD_ITEMS = "items"
 
 
 def validate_from_filepath(
@@ -47,6 +60,7 @@ def validate_from_dict(
         TOPLEVEL_FIELD_MOVE_COSTS,
         TOPLEVEL_FIELD_BOSS_BATTLES,
         TOPLEVEL_FIELD_REQUIRED_SPIRITS,
+        TOPLEVEL_FIELD_ITEMS,
     ]
 
     messages["warnings"] = list()
@@ -105,6 +119,17 @@ def validate_from_dict(
             parsed_data[TOPLEVEL_FIELD_REQUIRED_SPIRITS] = required_spirits
             messages_wrn.extend(new_wrns)
             messages_err.extend(new_errs)
+
+        elif k == TOPLEVEL_FIELD_ITEMS:
+            if plando_data[k] is not None and not isinstance(plando_data[k], dict):
+                messages_err.append(f"Top-level key has wrong data type (expected dict or null): \"{plando_data[k]}\" ({type(plando_data[k])})")
+                continue
+            item_placement, new_wrns, new_errs = _get_item_placement(plando_data[k])
+
+            parsed_data[TOPLEVEL_FIELD_ITEMS] = item_placement
+            messages_wrn.extend(new_wrns)
+            messages_err.extend(new_errs)
+            print(parsed_data[TOPLEVEL_FIELD_ITEMS])
 
     if messages_err:
         parsed_data.clear()
@@ -613,3 +638,251 @@ def _get_required_spirits(
     parsed_required_spirits.sort()
 
     return parsed_required_spirits, new_wrns, new_errs
+
+
+def _get_item_placement(
+    item_areas: dict[str, dict[str, str | None | dict[str, str | int | None]]] | None
+) -> tuple[list[int], list[str], list[str]]:
+    """
+    Validates and parses item placement.
+    Item placement is subject to certain restrictions, which the seed generator
+    has to abide by as well. Certain items can be places unlimited times, while
+    others have an upper maximum count. Placing certain items manually will also
+    force active certain seed settings the placed item relies upon.
+
+    Warnings are caused by: Valid but disallowed areas or item locations (get
+    ignored), passing an unused key in as shop dict, placing items in locations
+    that currently cannot be plando'd, placing badges of the badge families that
+    have progressive badge equivalents (force-deactivates Progressive Badges),
+    placing progressive badges (force-activates Progressive Badges), placing
+    partner upgrade items (force-activates Partern Upgrade Shuffle), placing
+    more than 34 starpieces.
+
+    Errors are caused by: Wrong datatypes for keys or values, setting item
+    prices for non-shop locations or for shops with static prices, setting item
+    prices outside of the allowed range, placing an unrecognized item or trap,
+    placing a trap into a location that cannot handle trap items, placing both
+    badges of the badge families that have progressive badge equivalents and
+    their progressive badge counterparts, placing a limited item more often than
+    allowed.
+    """
+    new_wrns: set[str] = set()
+    new_errs: list[str] = list()
+    parsed_item_placement: dict[str, dict[str, int | str]] = dict()
+
+    if item_areas is None:
+        return parsed_item_placement, list(new_wrns), new_errs
+
+    track_placed_items: dict[str, list] = dict()
+
+    def _try_placing_item(
+        ref_item_placement_dict: dict,
+        area_key: str,
+        item_location: str,
+        item_name: str,
+        shop_data_key: str | None = None,
+    ) -> tuple[list[str], list[str]]:
+        placement_wrns: list[str] = list()
+        placement_errs: list[str] = list()
+
+        placement_okay = True
+
+        # Check: Is item allowed to be placed here?
+        ## Block locations cannot be set
+        if area_key in block_locations and item_location in block_locations[area_key]:
+            placement_okay = False
+            placement_wrns.append(f"items: location \"{area_key}:{item_location}\" cannot be plando'd at the moment and is ignored")
+
+        ## Item is trap and location cannot hold traps
+        if (    item_name.startswith("TRAP")
+            and (   (    area_key in shop_locations
+                     and item_location in shop_locations[area_key])
+                 or item_location in forbidden_trap_locations
+            )
+        ):
+            placement_okay = False
+            placement_errs.append(f"items: location \"{area_key}:{item_location}\" cannot hold traps")
+
+        # Check: Specific trap item is a valid item
+        if item_name.startswith("TRAP") and item_name != "TRAP":
+            regex_match = re.match(r"TRAP \((.*)\)", item_name)
+            specific_trap = regex_match.group(1)
+            if specific_trap is None:
+                placement_okay = False
+                placement_errs.append(f"items: location \"{area_key}:{item_location}\" has trap set that's not recognized: \"{item_name}\"")
+            elif specific_trap not in allowed_items:
+                placement_okay = False
+                placement_errs.append(f"items: location \"{area_key}:{item_location}\" has trap set that is not an allowed item: \"{item_name}\"")
+
+        # Check: Progressive badge families being placed manually
+        if item_name in progressive_badges["originals"]:
+            if any([x for x in progressive_badges["progressives"] if x in track_placed_items]):
+                placement_okay = False
+                placement_errs.append(f"items: cannot place both progressive and non-progressive badges")
+            else:
+                placement_wrns.append(f"items: badge \"{item_name}\" is manually set: This turns off Progressive Badges")
+        if item_name in progressive_badges["progressives"]:
+            if any([x for x in progressive_badges["originals"] if x in track_placed_items]):
+                placement_okay = False
+                placement_errs.append(f"items: cannot place both progressive and non-progressive badges")
+            else:
+                placement_wrns.append(f"items: badge \"{item_name}\" is manually set: This turns on Progressive Badges")
+
+        # Check: Partner Upgrade items and warn that they turn on their setting
+        if item_name.endswith("Upgrade"):
+            placement_wrns.append(f"items: placing partner upgrade will turn on Partner Upgrade Shuffle")
+
+        # Check: Did we already exceed the number of intances allowed for this item?
+        if item_name in limited_items and item_name in track_placed_items:
+            if track_placed_items[item_name] >= limited_items[item_name]:
+                placement_okay = False
+                placement_errs.append(f"items: \"{item_name}\" placed more often than allowed. max: {limited_items[item_name]}")
+
+            ## Check: If star pieces, check numbers for warning thresholds
+            if item_name == "StarPiece" and 34 < track_placed_items[item_name]:
+                placement_wrns.append("items: placed more than 34 star pieces: Depending on settings this can lead to weird vanilla star piece locations")
+
+
+        if placement_okay:
+            if area_key not in ref_item_placement_dict:
+                ref_item_placement_dict[area_key] = dict()
+            if shop_data_key is None:
+                ref_item_placement_dict[area_key][item_location] = item_name
+                if item_name not in track_placed_items:
+                    track_placed_items[item_name] = 1
+                else:
+                    track_placed_items[item_name] += 1
+            else:
+                if item_location not in ref_item_placement_dict[area_key]:
+                    ref_item_placement_dict[area_key][item_location] = dict()
+                ref_item_placement_dict[area_key][item_location][shop_data_key] = item_name
+
+        return placement_wrns, placement_errs
+
+
+    for area_key, v in item_areas.items():
+        # Check datatypes for top-level key and values
+        new_err_found = False
+        if not isinstance(area_key, str):
+            new_errs.append(f"items: key has wrong data type (expected str): \"{area_key}\" ({type(area_key)})")
+            new_err_found = True
+        if v is not None and not isinstance(v, dict):
+            new_errs.append(f"items: value has wrong data type (expected dict): \"{v}\" ({type(v)})")
+            new_err_found = True
+        if new_err_found:
+            continue
+
+        # Check if key is an allowed area name
+        if area_key not in allowed_locations:
+            new_wrns.add(f"items: found unexpected key: \"{area_key}\" (not one of {allowed_locations.keys()=})")
+            continue
+
+        # Check if value is unset
+        if v is None:
+            continue
+
+        for item_location, item_or_shopdict in v.items():
+            # Check datatypes for item location key and values
+            new_err_found = False
+            if not isinstance(item_location, str):
+                new_errs.append(f"items: item location has wrong data type (expected str): \"{item_location}\" ({type(item_location)})")
+                new_err_found = True
+            if (    item_or_shopdict is not None
+                and not isinstance(item_or_shopdict, (str, dict))
+            ):
+                new_errs.append(f"items: item has wrong data type (expected str, dict or null): \"{item_or_shopdict}\" ({type(item_or_shopdict)})")
+                new_err_found = True
+            if new_err_found:
+                continue
+
+            # Check if item location key is an allowed item location
+            if item_location not in allowed_locations[area_key]:
+                new_wrns.add(f"items: found unexpected item location: \"{item_location}\" (not part of \"{area_key}\")")
+                continue
+
+            # Check if value is unset
+            if item_or_shopdict is None:
+                continue
+
+            if isinstance(item_or_shopdict, dict):
+                # Check if this location even is a shop
+                if not item_location in shop_locations[area_key]:
+                    new_errs.append(f"items: item location \"{item_location}\" is not a shop, but \"{item_or_shopdict}\" is a dict")
+                    continue
+                # Check if someone tries setting the prices for Merlow
+                if (    area_key in disallowed_shop_locations
+                    and item_location in disallowed_shop_locations[area_key]
+                ):
+                    new_errs.append(f"items: item location \"{item_location}\" is not a shop you can set the item price for (should be str instead)")
+                    continue
+
+                for key, val in item_or_shopdict.items():
+                    new_err_found = False
+                    if not isinstance(key, str):
+                        new_errs.append(f"items: shop-dict key has wrong data type (expected str): \"{key}\" ({type(key)})")
+                        new_err_found = True
+                    if val is not None and not isinstance(val, (str, int)):
+                        new_errs.append(f"items: shop-dict value has wrong data type (expected str, int or null): \"{val}\" ({type(val)})")
+                        new_err_found = True
+                    if new_err_found or val is None:
+                        continue
+
+                    # Check if value is allowed for this key
+                    if key not in ["item", "price"]:
+                        new_wrns.add(f"items: found unexpected key \"{key}\"in item location: \"{item_location}\" (not one of ['item','price'])")
+
+                    if key == "price":
+                        if not isinstance(val, int):
+                            new_errs.append(f"items: shop-price for \"{item_location}\" has wrong data type (expected int or null): \"{val}\" ({type(val)})")
+                            continue
+                        if not 0 <= val <= 999:
+                            new_errs.append(f"items: shop-price for \"{item_location}\" is outside of allowed range of 0-999: \"{val}\")")
+                            continue
+
+                        #+ Add item price here
+                        if area_key not in parsed_item_placement:
+                            parsed_item_placement[area_key] = dict()
+                        if item_location not in parsed_item_placement[area_key]:
+                            parsed_item_placement[area_key][item_location] = dict()
+                        parsed_item_placement[area_key][item_location][key] = val
+
+                    else: # key == "item"
+                        if not isinstance(val, str):
+                            new_errs.append(f"items: shop item for \"{item_location}\" has wrong data type (expected str or null): \"{val}\" ({type(val)})")
+                            continue
+
+                        # Check if item can be set
+                        if val not in allowed_items and not item_or_shopdict.startswith("TRAP ("):
+                            new_errs.append(f"items: found unexpected item at \"{item_location}\": \"{val}\"")
+                            continue
+                        # Special item placement checks
+                        placement_wrns, placement_errs = _try_placing_item(
+                            parsed_item_placement,
+                            area_key,
+                            item_location,
+                            val,
+                            key,
+                        )
+                        for wrn in placement_wrns:
+                            new_wrns.add(wrn)
+                        new_errs.extend(placement_errs)
+
+            else: # has to be str
+                item_name = item_or_shopdict
+                # Check if item can be set
+                if item_name not in allowed_items and not item_name.startswith("TRAP ("):
+                    new_errs.append(f"items: found unexpected item at \"{item_location}\": \"{item_name}\"")
+                    continue
+
+                # Special item placement checks
+                placement_wrns, placement_errs = _try_placing_item(
+                    parsed_item_placement,
+                    area_key,
+                    item_location,
+                    item_name,
+                )
+                for wrn in placement_wrns:
+                    new_wrns.add(wrn)
+                new_errs.extend(placement_errs)
+
+    return parsed_item_placement, list(new_wrns), new_errs
