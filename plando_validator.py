@@ -129,7 +129,6 @@ def validate_from_dict(
             parsed_data[TOPLEVEL_FIELD_ITEMS] = item_placement
             messages_wrn.extend(new_wrns)
             messages_err.extend(new_errs)
-            print(parsed_data[TOPLEVEL_FIELD_ITEMS])
 
     if messages_err:
         parsed_data.clear()
