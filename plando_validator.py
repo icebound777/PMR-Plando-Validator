@@ -859,7 +859,7 @@ def _get_item_placement(
 
                         # Check if location is one of the Dry Dry Outpost code spots
                         if item_location in force_puzzlerando_locations:
-                            new_wrns.append("items: item placed into Dry Dry Outpost shop code location: This may force on Random Puzzles")
+                            new_wrns.add("items: item placed into Dry Dry Outpost shop code location: This may force on Random Puzzles")
 
                         # Special item placement checks
                         placement_wrns, placement_errs = _try_placing_item(
