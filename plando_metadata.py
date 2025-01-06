@@ -1496,3 +1496,9 @@ forbidden_trap_locations: list[str] = [
     "Beach - Over Flower 1",
     "Beach - Over Flower 2",
 ]
+
+force_puzzlerando_locations: list[str] = [
+    "Outpost 1 - Shop Item 2",
+    "Outpost 1 - Shop Item 4",
+    "Outpost 1 - Shop Item 5",
+]

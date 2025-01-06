@@ -15,6 +15,7 @@ from .plando_metadata import (
     limited_items,
     progressive_badges,
     forbidden_trap_locations,
+    force_puzzlerando_locations,
 )
 
 
@@ -655,7 +656,8 @@ def _get_item_placement(
     have progressive badge equivalents (force-deactivates Progressive Badges),
     placing progressive badges (force-activates Progressive Badges), placing
     partner upgrade items (force-activates Partern Upgrade Shuffle), placing
-    more than 34 starpieces.
+    more than 34 starpieces, placing items into the Dry Dry Outpost shop spots
+    where the shop code items usually are (force-activates Random Puzzles).
 
     Errors are caused by: Wrong datatypes for keys or values, setting item
     prices for non-shop locations or for shops with static prices, setting item
@@ -854,6 +856,11 @@ def _get_item_placement(
                         if val not in allowed_items and not item_or_shopdict.startswith("TRAP ("):
                             new_errs.append(f"items: found unexpected item at \"{item_location}\": \"{val}\"")
                             continue
+
+                        # Check if location is one of the Dry Dry Outpost code spots
+                        if item_location in force_puzzlerando_locations:
+                            new_wrns.append("items: item placed into Dry Dry Outpost shop code location: This may force on Random Puzzles")
+
                         # Special item placement checks
                         placement_wrns, placement_errs = _try_placing_item(
                             parsed_item_placement,
