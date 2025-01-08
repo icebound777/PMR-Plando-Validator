@@ -183,7 +183,7 @@ Item placement has the following rules:
   * Power stars may be placed even if no setting requires collecting them
 * Item Traps
   * Traps may be placed by using the item name `"TRAP"`. This will pick a random unique item sprite to represent the trap
-  * Trap items may be appended by an item name in parentheses, to force the trap to take that item's sprite. For example: `"TRAP (UltraStone)"`. This allows arbitrary item trap sprites, even those are usually not chosen by the randomizer, like consumables and coins
+  * Trap items may be appended by an item name in parentheses, to force the trap to take that item's sprite. For example: `"TRAP (UltraStone)"`. This allows arbitrary item trap sprites, even those are usually not chosen by the randomizer, like consumables. Coins, however, cannot be used as trap items
   * Traps may not be placed into item shops, Rowf's shop or Merlow's star piece trade
   * Manually placed traps count against the number of traps to be placed according to the `Item Trap Mode` setting, but won't be removed if that setting is lower than the number of manually placed traps
 * Item shop prices

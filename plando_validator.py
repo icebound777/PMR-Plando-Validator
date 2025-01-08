@@ -711,7 +711,7 @@ def _get_item_placement(
             if specific_trap is None:
                 placement_okay = False
                 placement_errs.append(f"items: location \"{area_key}:{item_location}\" has trap set that's not recognized: \"{item_name}\"")
-            elif specific_trap not in allowed_items:
+            elif specific_trap not in allowed_items or specific_trap == "Coin":
                 placement_okay = False
                 placement_errs.append(f"items: location \"{area_key}:{item_location}\" has trap set that is not an allowed item: \"{item_name}\"")
 
