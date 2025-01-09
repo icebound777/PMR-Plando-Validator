@@ -199,8 +199,6 @@ The following values may be set as placed items:
   * `TRAP (itemname)`: Place a trap with `itemname` as its sprite
   * `NonProgression`: Places a random consumable or non-progression unique item (key/partnerupgrade/badge)
   * `Consumable`: Places a random consumable
-  * `Trash`: Places a random consumable that's considered sub-par
-    * These are: `DustyHammer`,`DriedShroom`,`Pebble`,`Mistake`
 * Unique items
   * Key Items
     * `UltraStone`

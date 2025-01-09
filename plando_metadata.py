@@ -900,7 +900,6 @@ allowed_items: list[str] = [
     "TRAP",
     "NonProgression",
     "Consumable",
-    "Trash",
     "UltraStone",
     "Dolly",
     "StoreroomKey",
