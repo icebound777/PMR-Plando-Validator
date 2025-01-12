@@ -665,7 +665,7 @@ def _get_item_placement(
     placing a trap into a location that cannot handle trap items, placing both
     badges of the badge families that have progressive badge equivalents and
     their progressive badge counterparts, placing a limited item more often than
-    allowed.
+    allowed, placing all 8 partners.
     """
     new_wrns: set[str] = set()
     new_errs: list[str] = list()
@@ -742,6 +742,14 @@ def _get_item_placement(
             ## Check: If star pieces, check numbers for warning thresholds
             if item_name == "StarPiece" and 34 < track_placed_items[item_name]:
                 placement_wrns.append("items: placed more than 34 star pieces: Depending on settings this can lead to weird vanilla star piece locations")
+
+        # Check: Is this item the 8th partner we place, in turn not leaving any
+        # partner to start the seed with?
+        if (   item_name in partner_items
+            and 7 == sum([track_placed_items.get(partner, 0) for partner in partner_items])
+        ):
+            placement_okay = False
+            placement_errs.append(f"items: attempting to place all 8 partners does not leave any partner to start the seed with")
 
 
         if placement_okay:

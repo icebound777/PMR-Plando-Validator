@@ -1195,6 +1195,17 @@ allowed_items: list[str] = [
     "Mistake",
 ]
 
+partner_items = [
+    "Goombario",
+    "Kooper",
+    "Bombette",
+    "Parakarry",
+    "Bow",
+    "Watt",
+    "Sushie",
+    "Lakilester",
+]
+
 block_locations: dict[str, list[str]]= {
     "Goomba Region": ["Jr. Troopas Playground - In MultiCoinBlock"],
     "Toad Town": ["Port District - In MultiCoinBlock"],
