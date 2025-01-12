@@ -757,6 +757,10 @@ def _get_item_placement(
                 if item_location not in ref_item_placement_dict[area_key]:
                     ref_item_placement_dict[area_key][item_location] = dict()
                 ref_item_placement_dict[area_key][item_location][shop_data_key] = item_name
+                if item_name not in track_placed_items:
+                    track_placed_items[item_name] = 1
+                else:
+                    track_placed_items[item_name] += 1
 
         return placement_wrns, placement_errs
 
