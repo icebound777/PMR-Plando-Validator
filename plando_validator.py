@@ -16,6 +16,7 @@ from .plando_metadata import (
     progressive_badges,
     forbidden_trap_locations,
     force_puzzlerando_locations,
+    partner_items,
 )
 
 
