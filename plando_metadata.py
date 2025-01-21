@@ -1513,3 +1513,24 @@ force_puzzlerando_locations: list[str] = [
     "Outpost 1 - Shop Item 4",
     "Outpost 1 - Shop Item 5",
 ]
+
+mutually_exclusive_items: dict[str, list[str]] = {
+    "UltraStone": [
+        "GoombarioUpgrade",
+        "KooperUpgrade",
+        "BombetteUpgrade",
+        "ParakarryUpgrade",
+        "BowUpgrade",
+        "WattUpgrade",
+        "SushieUpgrade",
+        "LakilesterUpgrade",
+    ],
+    "GoombarioUpgrade": ["UltraStone"],
+    "KooperUpgrade": ["UltraStone"],
+    "BombetteUpgrade": ["UltraStone"],
+    "ParakarryUpgrade": ["UltraStone"],
+    "BowUpgrade": ["UltraStone"],
+    "WattUpgrade": ["UltraStone"],
+    "SushieUpgrade": ["UltraStone"],
+    "LakilesterUpgrade": ["UltraStone"],
+}
