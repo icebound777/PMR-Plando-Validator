@@ -659,7 +659,8 @@ def _get_item_placement(
     placing progressive badges (force-activates Progressive Badges), placing
     partner upgrade items (force-activates Partern Upgrade Shuffle), placing
     more than 34 starpieces, placing items into the Dry Dry Outpost shop spots
-    where the shop code items usually are (force-activates Random Puzzles).
+    where the shop code items usually are (force-activates Random Puzzles),
+    placing magical seeds.
 
     Errors are caused by: Wrong datatypes for keys or values, setting item
     prices for non-shop locations or for shops with static prices, setting item
@@ -745,6 +746,15 @@ def _get_item_placement(
             ## Check: If star pieces, check numbers for warning thresholds
             if item_name == "StarPiece" and 34 < track_placed_items[item_name]:
                 placement_wrns.append("items: placed more than 34 star pieces: Depending on settings this can lead to weird vanilla star piece locations")
+
+        # Check: Magical Seeds and warn that they may modify the flower gate
+        # setting
+        if item_name.startswith("MagicalSeed"):
+            placement_wrns.append(
+                "items: placed one or more magical seeds: this may adjust your "
+                "settings for the number of seeds required to open the flower "
+                "gate."
+            )
 
         # Check: Does this item clash with another one already placed due to
         # conflicting settings?
