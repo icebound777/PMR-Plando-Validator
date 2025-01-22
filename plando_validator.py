@@ -10,6 +10,7 @@ from .plando_metadata import (
     allowed_locations,
     shop_locations,
     disallowed_shop_locations,
+    allowed_placeholders,
     allowed_items,
     block_locations,
     limited_items,
@@ -892,7 +893,7 @@ def _get_item_placement(
                             continue
 
                         # Check if item can be set
-                        if val not in allowed_items and not item_or_shopdict.startswith("TRAP ("):
+                        if val not in allowed_items and val not in allowed_placeholders and not item_or_shopdict.startswith("TRAP ("):
                             new_errs.append(f"items: found unexpected item at \"{item_location}\": \"{val}\"")
                             continue
 
@@ -915,7 +916,7 @@ def _get_item_placement(
             else: # has to be str
                 item_name = item_or_shopdict
                 # Check if item can be set
-                if item_name not in allowed_items and not item_name.startswith("TRAP ("):
+                if item_name not in allowed_items and item_name not in allowed_placeholders and not item_name.startswith("TRAP ("):
                     new_errs.append(f"items: found unexpected item at \"{item_location}\": \"{item_name}\"")
                     continue
 

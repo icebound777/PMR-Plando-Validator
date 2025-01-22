@@ -896,10 +896,13 @@ disallowed_shop_locations: dict[str, list[str]] = {
     ],
 }
 
-allowed_items: list[str] = [
+allowed_placeholders: list[str] = [
     "TRAP",
     "NonProgression",
     "Consumable",
+]
+
+allowed_items: list[str] = [
     "UltraStone",
     "Dolly",
     "StoreroomKey",
