@@ -171,9 +171,9 @@ Item placement has the following rules:
   * Placing more than 34 star pieces will result in a warning, as that many star pieces can usually be found on the overworld. All other placeable star pieces are obtained via hidden panels or delivering letters.
   * It should generally be fine to place ...
     * up to 34 star pieces if neither hidden panels nor letter rewards are shuffled,
+    * up to 45 star pieces if letter rewards are shuffled, but not hidden panels,
     * up to 70 star pieces if hidden panels are shuffled, but not letter rewards,
-    * up to 46 star pieces if letter rewards are shuffled, but not hidden panels,
-    * up to 82 star pieces otherwise
+    * up to 81 star pieces otherwise
   * At most 5 Three Star Pieces items may be placed. Placing any of these will result in a warning, as these are usually obtained via Koopa Koot
   * If you place more star pieces than the settings chosen support, star pieces will be removed from non-randomized star piece locations to compensate. So it might happen that some hidden panels hold a consumable instead of a star piece, even though the hidden panels are not shuffled
 * Power Stars

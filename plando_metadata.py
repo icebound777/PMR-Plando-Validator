@@ -1468,7 +1468,7 @@ limited_items: dict[str, int] = {
     "SushieUpgrade": 2,
     "LakilesterUpgrade": 2,
     # Collectables
-    "StarPiece": 82,
+    "StarPiece": 81,
     "ThreeStarPieces": 5,
     "PowerStar": 120,
     # Star Powers
