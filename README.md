@@ -175,7 +175,7 @@ Item placement has the following rules:
     * up to 70 star pieces if hidden panels are shuffled, but not letter rewards,
     * up to 81 star pieces otherwise
   * At most 5 Three Star Pieces items may be placed. Placing any of these will result in a warning, as these are usually obtained via Koopa Koot
-  * If you place more star pieces than the settings chosen support, star pieces will be removed from non-randomized star piece locations to compensate. So it might happen that some hidden panels hold a consumable instead of a star piece, even though the hidden panels are not shuffled
+  * If you place more star pieces than the settings chosen support, your seed will hold more star pieces than a seed usually allows. Both the vanilla star piece locations set to not randomized in the settings, and your manually placed star pieces, will indeed be star pieces.
 * Power Stars
   * At most 120 power stars may be placed
   * If too few are placed to reach the value set for the `Total Power Stars` setting, then additional power stars will be placed by the randomizer
