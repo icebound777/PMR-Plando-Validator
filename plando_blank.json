@@ -1,30 +1,24 @@
 {
     "difficulty": {
-        "chapter 1": 1,
-        "chapter 2": 2,
-        "chapter 3": 3,
-        "chapter 4": 4,
-        "chapter 5": 5,
-        "chapter 6": 6,
-        "chapter 7": 7
+        "chapter 1": null,
+        "chapter 2": null,
+        "chapter 3": null,
+        "chapter 4": null,
+        "chapter 5": null,
+        "chapter 6": null,
+        "chapter 7": null
     },
     "boss_battles": {
-        "chapter 1": "KoopaBros",
-        "chapter 2": "Tutankoopa",
-        "chapter 3": "TubbasHeart",
-        "chapter 4": "GeneralGuy",
-        "chapter 5": "LavaPiranha",
-        "chapter 6": "HuffNPuff",
-        "chapter 7": "CrystalKing"
+        "chapter 1": null,
+        "chapter 2": null,
+        "chapter 3": null,
+        "chapter 4": null,
+        "chapter 5": null,
+        "chapter 6": null,
+        "chapter 7": null
     },
     "required_spirits": [
-        "Eldstar",
-        "Mamar",
-        "Skolar",
-        "Muskular",
-        "Misstar",
-        "Klevar",
-        "Kalmar"
+        null
     ],
     "move_costs": {
         "badge": {
