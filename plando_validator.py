@@ -19,6 +19,8 @@ from .plando_metadata import (
     force_puzzlerando_locations,
     partner_items,
     mutually_exclusive_items,
+    illogical_locations,
+    progression_items,
 )
 
 
@@ -661,7 +663,8 @@ def _get_item_placement(
     partner upgrade items (force-activates Partern Upgrade Shuffle), placing
     more than 34 starpieces, placing items into the Dry Dry Outpost shop spots
     where the shop code items usually are (force-activates Random Puzzles),
-    placing magical seeds.
+    placing magical seeds, placing progression items into locations that are
+    always out of logic.
 
     Errors are caused by: Wrong datatypes for keys or values, setting item
     prices for non-shop locations or for shops with static prices, setting item
@@ -697,7 +700,7 @@ def _get_item_placement(
         ## Block locations cannot be set
         if area_key in block_locations and item_location in block_locations[area_key]:
             placement_okay = False
-            placement_wrns.append(f"items: location \"{area_key}:{item_location}\" cannot be plando'd at the moment and is ignored")
+            placement_wrns.append(f"items: location \"{area_key}: {item_location}\" cannot be plando'd at the moment and is ignored")
 
         ## Item is trap and location cannot hold traps
         if (    item_name.startswith("TRAP")
@@ -708,6 +711,14 @@ def _get_item_placement(
         ):
             placement_okay = False
             placement_errs.append(f"items: location \"{area_key}:{item_location}\" cannot hold traps")
+
+        ## Location is always out of logic, and is made to hold progression
+        if item_location in illogical_locations and item_name in progression_items:
+            placement_wrns.append(
+                f"items: progression item \"{item_name}\" placed into location "
+                f"that is always out of logic: \"{area_key}: {item_location}\". "
+                "This item will always count an unreachable!"
+            )
 
         # Check: Specific trap item is a valid item
         if item_name.startswith("TRAP") and item_name != "TRAP":
