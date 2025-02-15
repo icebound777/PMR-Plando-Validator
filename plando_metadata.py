@@ -896,6 +896,70 @@ disallowed_shop_locations: dict[str, list[str]] = {
     ],
 }
 
+ignored_locations_bc_bossrush: dict[str, list[str]] = {
+    "Bowsers Castle": [
+        "Front Door Exterior - Red Block",
+        "Lower Jail - In Crate 1",
+        "Lower Jail - In Crate 2",
+        "Outside Lower Jail - Defeat Koopatrol Reward",
+        "Outside Lower Jail - Yellow Block",
+        "Lava Key Room - In Chest",
+        "Lava Channel 3 - On Island 1",
+        "Lava Channel 3 - On Island 2",
+        "Dark Cave 1 - Yellow Block",
+        "Dark Cave 2 - Yellow Block",
+        "East Upper Jail - Defeat Koopatrol Reward",
+        "Item Shop - Shop Item 1",
+        "Item Shop - Shop Item 2",
+        "Item Shop - Shop Item 3",
+        "Item Shop - Shop Item 4",
+        "Item Shop - Shop Item 5",
+        "Item Shop - Shop Item 6",
+        "Left Water Puzzle - Top Left Ledge",
+        "Right Water Puzzle - Hidden Block",
+        "Room with Hidden Door 1 - Hidden Block",
+        "Room with Hidden Door 1 - Yellow Block",
+        "Hidden Key Room - On The Ground",
+        "Battlement - On Ledge",
+        "Battlement - Yellow Block Left",
+        "Battlement - Yellow Block Center",
+        "Battlement - Yellow Block Right",
+        "West Upper Jail - Defeat Koopatrol Reward",
+        "Ultra Shroom Room - On The Ground",
+        "Castle Key Room - On The Ground",
+    ],
+}
+
+ignored_locations_bc_shortened: dict[str, list[str]] = {
+    "Bowsers Castle": [
+        "Front Door Exterior - Red Block",
+        "Lower Jail - In Crate 1",
+        "Lower Jail - In Crate 2",
+        "Outside Lower Jail - Yellow Block",
+        "Lava Key Room - In Chest",
+        "Lava Channel 3 - On Island 1",
+        "Lava Channel 3 - On Island 2",
+        "Dark Cave 1 - Yellow Block",
+        "Dark Cave 2 - Yellow Block",
+        "Left Water Puzzle - Top Left Ledge",
+        "Right Water Puzzle - Hidden Block",
+        "Hidden Key Room - On The Ground",
+        "Castle Key Room - On The Ground",
+    ],
+}
+
+ignored_locations_openstarway: dict[str, list[str]] = {
+    "Shooting Star Summit": [
+        "Star Haven - Shop Item 1",
+        "Star Haven - Shop Item 2",
+        "Star Haven - Shop Item 3",
+        "Star Haven - Shop Item 4",
+        "Star Haven - Shop Item 5",
+        "Star Haven - Shop Item 6",
+        "Star Sanctuary - Gift of the Stars",
+    ]
+}
+
 allowed_placeholders: list[str] = [
     "TRAP",
     "NonProgression",

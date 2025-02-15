@@ -21,6 +21,9 @@ from .plando_metadata import (
     mutually_exclusive_items,
     illogical_locations,
     progression_items,
+    ignored_locations_bc_bossrush,
+    ignored_locations_bc_shortened,
+    ignored_locations_openstarway
 )
 
 
@@ -664,7 +667,8 @@ def _get_item_placement(
     more than 34 starpieces, placing items into the Dry Dry Outpost shop spots
     where the shop code items usually are (force-activates Random Puzzles),
     placing magical seeds, placing progression items into locations that are
-    always out of logic.
+    always out of logic, placing items into a location that may be inaccessible
+    due to chosen settings.
 
     Errors are caused by: Wrong datatypes for keys or values, setting item
     prices for non-shop locations or for shops with static prices, setting item
@@ -855,6 +859,26 @@ def _get_item_placement(
             # Check if value is unset
             if item_or_shopdict is None:
                 continue
+
+            # Check if location can be removed by settings
+            if area_key in ignored_locations_openstarway and item_location in ignored_locations_openstarway[area_key]:
+                new_wrns.add(
+                    f"items: location \"{area_key}: {item_location}\" has item set, but may "\
+                    "be ignored if the seed goal is set to \"Open Star Way\", as the location "
+                    "may be inaccessible"
+                )
+            if area_key in ignored_locations_bc_shortened and item_location in ignored_locations_bc_shortened[area_key]:
+                new_wrns.add(
+                    f"items: location \"{area_key}: {item_location}\" has item set, but may "\
+                    "be ignored if Bowser's Castle is set to \"Shortened\", as the location "
+                    "may be inaccessible"
+                )
+            if area_key in ignored_locations_bc_bossrush and item_location in ignored_locations_bc_bossrush[area_key]:
+                new_wrns.add(
+                    f"items: location \"{area_key}: {item_location}\" has item set, but may "\
+                    "be ignored if Bowser's Castle is set to \"Boss Rush\", as the location "
+                    "may be inaccessible"
+                )
 
             if isinstance(item_or_shopdict, dict):
                 # Check if this location even is a shop
