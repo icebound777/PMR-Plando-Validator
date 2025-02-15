@@ -868,19 +868,31 @@ def _get_item_placement(
                 continue
 
             # Check if location can be removed by settings
-            if area_key in ignored_locations_openstarway and item_location in ignored_locations_openstarway[area_key]:
+            if (    area_key in ignored_locations_openstarway
+                and item_location in ignored_locations_openstarway[area_key]
+                and (   isinstance(item_or_shopdict, str)
+                     or item_or_shopdict.get("item") is not None)
+            ):
                 new_wrns.add(
                     f"items: location \"{area_key}: {item_location}\" has item set, but may "\
                     "be ignored if the seed goal is set to \"Open Star Way\", as the location "
                     "may be inaccessible"
                 )
-            if area_key in ignored_locations_bc_shortened and item_location in ignored_locations_bc_shortened[area_key]:
+            if (    area_key in ignored_locations_bc_shortened
+                and item_location in ignored_locations_bc_shortened[area_key]
+                and (   isinstance(item_or_shopdict, str)
+                     or item_or_shopdict.get("item") is not None)
+            ):
                 new_wrns.add(
                     f"items: location \"{area_key}: {item_location}\" has item set, but may "\
                     "be ignored if Bowser's Castle is set to \"Shortened\", as the location "
                     "may be inaccessible"
                 )
-            if area_key in ignored_locations_bc_bossrush and item_location in ignored_locations_bc_bossrush[area_key]:
+            if (    area_key in ignored_locations_bc_bossrush
+                and item_location in ignored_locations_bc_bossrush[area_key]
+                and (   isinstance(item_or_shopdict, str)
+                     or item_or_shopdict.get("item") is not None)
+            ):
                 new_wrns.add(
                     f"items: location \"{area_key}: {item_location}\" has item set, but may "\
                     "be ignored if Bowser's Castle is set to \"Boss Rush\", as the location "
