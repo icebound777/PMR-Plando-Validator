@@ -189,6 +189,8 @@ Item placement has the following rules:
 * Item shop prices
   * Prices in shops selling items for coins can be set from 0-999
   * Prices in Merlow's star piece shop cannot be adjusted, and if changed anyway will cause a warning and be ignored
+* Star Beam
+  * Placing the Star Beam item, or placing an item into the Star Beam item location will turn on the `Shuffle Star Beam` setting
 * Super Block and Multi Coin Block locations
   * Are currently always ignored. Will cause a warning if set
 

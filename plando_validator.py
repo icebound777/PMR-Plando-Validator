@@ -17,6 +17,7 @@ from .plando_metadata import (
     progressive_badges,
     forbidden_trap_locations,
     force_puzzlerando_locations,
+    force_starbeam_shuffle_location,
     partner_items,
     mutually_exclusive_items,
     illogical_locations,
@@ -772,6 +773,12 @@ def _get_item_placement(
                 "gate."
             )
 
+        # Check: Placing Star Beam
+        if item_name == "StarBeam":
+            placement_wrns.append(
+                "items: placed Star Beam item: this will force on the \"Shuffle Star Beam\" setting"
+            )
+
         # Check: Does this item clash with another one already placed due to
         # conflicting settings?
         if (    item_name in mutually_exclusive_items
@@ -878,6 +885,13 @@ def _get_item_placement(
                     f"items: location \"{area_key}: {item_location}\" has item set, but may "\
                     "be ignored if Bowser's Castle is set to \"Boss Rush\", as the location "
                     "may be inaccessible"
+                )
+
+            # Check if item location is "Star Sanctuary - Gift of the Stars"
+            if item_location == force_starbeam_shuffle_location:
+                new_wrns.add(
+                    f"items: placed item into the \"{force_starbeam_shuffle_location}\" location: "\
+                    "This will force on the \"Shuffle Star Beam\" setting"
                 )
 
             if isinstance(item_or_shopdict, dict):

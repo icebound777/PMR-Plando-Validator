@@ -1581,6 +1581,8 @@ force_puzzlerando_locations: list[str] = [
     "Outpost 1 - Shop Item 5",
 ]
 
+force_starbeam_shuffle_location: str = "Star Sanctuary - Gift of the Stars"
+
 mutually_exclusive_items: dict[str, list[str]] = {
     "UltraStone": [
         "GoombarioUpgrade",
