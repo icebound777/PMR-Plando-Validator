@@ -1720,3 +1720,40 @@ progression_items: list[str] = [
     "ThreeStarPieces",
     "PowerStar",
 ]
+
+rowf_badges = [
+    "SpeedySpin",
+    "FirstAttack",
+    "Multibounce",
+    "DDownPound",
+    "DodgeMaster",
+    "SleepStomp",
+    "DoubleDip",
+    "JumpCharge",
+    "SpinSmash",
+    "GroupFocus",
+    "AllorNothing",
+    "HPPlus", # HPPlusC
+    "FPPlus", # FPPlusC
+    "SSmashChg",
+    "DamageDodge", # DamageDodgeA
+    "MegaQuake",
+]
+
+merlow_badges = [
+    "AttackFXA",
+    "PayOff",
+    "ChillOut",
+    "PrettyLucky",
+    "FeelingFine",
+    "HappyHeart", # HappyHeartA
+    "HappyFlower", # HappyFlowerA
+    "Peekaboo",
+    "ZapTap",
+    "HeartFinder",
+    "FlowerFinder",
+    "HPDrain",
+    "MoneyMoney",
+    "FlowerSaver", # FlowerSaverA
+    "PowerPlus", # PowerPlusA
+]

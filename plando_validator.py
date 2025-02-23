@@ -24,7 +24,9 @@ from .plando_metadata import (
     progression_items,
     ignored_locations_bc_bossrush,
     ignored_locations_bc_shortened,
-    ignored_locations_openstarway
+    ignored_locations_openstarway,
+    rowf_badges,
+    merlow_badges,
 )
 
 
@@ -669,7 +671,8 @@ def _get_item_placement(
     where the shop code items usually are (force-activates Random Puzzles),
     placing magical seeds, placing progression items into locations that are
     always out of logic, placing items into a location that may be inaccessible
-    due to chosen settings.
+    due to chosen settings, placing a badge that is native to Rowf's or Merlow's
+    shop.
 
     Errors are caused by: Wrong datatypes for keys or values, setting item
     prices for non-shop locations or for shops with static prices, setting item
@@ -791,6 +794,24 @@ def _get_item_placement(
             placement_errs.append(
                 f"items: attempting to place \"{item_name}\", but this clashes "\
                 f"with other, already placed items: {mutually_exclusive_items[item_name]}"
+            )
+
+        # Check: Are we placing a badge that would be sold by Rowf if shop
+        # shuffle was turned off?
+        if (item_name in rowf_badges):
+            placement_wrns.append(
+                "items: placed a badge that would usually appear in Rowf's shop. "\
+                "This will require Shop Shuffle to be turned on, or not generate "\
+                "a seed successfully."
+            )
+
+        # Check: Are we placing a badge that would be sold by Merlow if shop
+        # shuffle was turned off?
+        if (item_name in merlow_badges):
+            placement_wrns.append(
+                "items: placed a badge that would usually appear in Merlow's shop. "\
+                "This will require Shop Shuffle to be turned on, or not generate "\
+                "a seed successfully."
             )
 
         # Check: Is this item the 8th partner we place, in turn not leaving any
