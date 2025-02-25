@@ -975,7 +975,7 @@ def _get_item_placement(
                             continue
 
                         # Check if item can be set
-                        if val not in allowed_items and val not in allowed_placeholders and not item_or_shopdict.startswith("TRAP ("):
+                        if val not in allowed_items and val not in allowed_placeholders and not val.startswith("TRAP ("):
                             new_errs.append(f"items: found unexpected item at \"{item_location}\": \"{val}\"")
                             continue
 
