@@ -672,7 +672,7 @@ def _get_item_placement(
     placing magical seeds, placing progression items into locations that are
     always out of logic, placing items into a location that may be inaccessible
     due to chosen settings, placing a badge that is native to Rowf's or Merlow's
-    shop.
+    shop, placing items into random block locations.
 
     Errors are caused by: Wrong datatypes for keys or values, setting item
     prices for non-shop locations or for shops with static prices, setting item
@@ -681,7 +681,8 @@ def _get_item_placement(
     badges of the badge families that have progressive badge equivalents and
     their progressive badge counterparts, placing a limited item more often than
     allowed, placing all 8 partners, placing an UltraStone if Partner Upgrades
-    are already placed or vice-versa.
+    are already placed or vice-versa, placing a SuperBlock outside of block
+    locations.
     """
     new_wrns: set[str] = set()
     new_errs: list[str] = list()
@@ -705,10 +706,17 @@ def _get_item_placement(
         placement_okay = True
 
         # Check: Is item allowed to be placed here?
-        ## Block locations cannot be set
-        if area_key in block_locations and item_location in block_locations[area_key]:
+        ## SuperBlocks cannot be placed outside of block locations
+        if (    item_name == "SuperBlock"
+            and (   area_key not in block_locations
+                 or item_location not in block_locations[area_key])
+        ):
             placement_okay = False
-            placement_wrns.append(f"items: location \"{area_key}: {item_location}\" cannot be plando'd at the moment and is ignored")
+            placement_errs.append(
+                f"items: \"SuperBlock\" placed into location "
+                f"\"{area_key}: {item_location}\" but SuperBlocks can only be "
+                "placed into SuperBlock or MultiCoinBlock locations"
+            )
 
         ## Item is trap and location cannot hold traps
         if (    item_name.startswith("TRAP")
@@ -756,6 +764,42 @@ def _get_item_placement(
         # Check: Partner Upgrade items and warn that they turn on their setting
         if item_name.endswith("Upgrade"):
             placement_wrns.append(f"items: placing partner upgrade will turn on Partner Upgrade Shuffle")
+
+        # Check: Random Block locations warnings
+        if (    area_key in block_locations
+            and item_location in block_locations[area_key]
+        ):
+            if "MultiCoinBlock" in item_location:
+                if item_name == "SuperBlock" or item_name.endswith("Upgrade"):
+                    placement_wrns.append(
+                        "items: placing a SuperBlock or Partner Upgrade item "
+                        "into a MultiCoinBlock location will set "
+                        "Multi Coin Block Shuffle to at least \"Shuffle\" and "
+                        "Partner Upgrade Shuffle to \"Shuffle\""
+                    )
+                elif item_name != "CoinBag":
+                    placement_wrns.append(
+                        "items: placing an item that is not a CoinBag, a "
+                        "SuperBlock, or a partner upgrade into a "
+                        "MultiCoinBlock location will set "
+                        "Multi Coin Block Shuffle to \"Anywhere\", and "
+                        "Partner Upgrade Shuffle to \"Full Shuffle\" "
+                    )
+            else: # "SuperBlock" in item_location
+                if item_name == "CoinBag":
+                    placement_wrns.append(
+                        "items: placing a CoinBag item into a SuperBlock "
+                        "location will set Partner Upgrade Shuffle to at least "
+                        "\"Shuffle\" and Multi Coin Block Shuffle to \"Shuffle\""
+                    )
+                elif item_name != "SuperBlock" and not item_name.endswith("Upgrade"):
+                    placement_wrns.append(
+                        "items: placing an item that is not a CoinBag, a "
+                        "SuperBlock, or a partner upgrade into a "
+                        "SuperBlock location will set "
+                        "Partner Upgrade Shuffle to \"Full Shuffle\", and "
+                        "Multi Coin Block Shuffle to \"Anywhere\""
+                    )
 
         # Check: Did we already exceed the number of intances allowed for this item?
         if item_name in limited_items and item_name in track_placed_items:

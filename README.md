@@ -192,7 +192,9 @@ Item placement has the following rules:
 * Star Beam
   * Placing the Star Beam item, or placing an item into the Star Beam item location will turn on the `Shuffle Star Beam` setting
 * Super Block and Multi Coin Block locations
-  * Are currently always ignored. Will cause a warning if set
+  * If `CoinBag` items are placed in these locations, they turn the block into a Multi Coin Block
+  * If `SuperBlock` items are placed in these locations, they turn the block into a regular Super Block. This requires Partner Upgrade Shuffle to be turned off, and you can place at most 16 `SuperBlock` items this way
+  * `SuperBlock` items can only be placed into Multi Coin Block or Super Block locations; they cannot be placed anywhere else
 
 The following values may be set as placed items:
 
@@ -404,11 +406,13 @@ The following values may be set as placed items:
     * `WattUpgrade`
     * `SushieUpgrade`
     * `LakilesterUpgrade`
+    * `SuperBlock`
   * Star Powers
     * `StarBeam`
   * `ItemPouch` (up to 5)
 * Collectables
   * `Coin`
+  * `CoinBag`
   * `StarPiece` (up to 82)
   * `ThreeStarPieces` (up to 5)
   * `PowerStar` (up to 120)
