@@ -20,6 +20,16 @@
     "required_spirits": [
         null
     ],
+    "dungeon_entrances": {
+        "PleasantPath": null,
+        "DryDryDesert": null,
+        "GustyGulch": null,
+        "EnterToyBox": null,
+        "LavalavaIsland": null,
+        "EnterFlowerGate": null,
+        "ShiverMountain": null,
+        "RideStarShip": null
+    },
     "move_costs": {
         "badge": {
             "AllorNothing": {

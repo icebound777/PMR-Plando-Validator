@@ -2,7 +2,6 @@
 Validator module for the Paper Mario Randomizer plandomizer file.
 """
 
-from functools import reduce
 import re
 import json
 
@@ -27,6 +26,8 @@ from .plando_metadata import (
     ignored_locations_openstarway,
     rowf_badges,
     merlow_badges,
+    dungeon_entrance_locations,
+    dungeons,
 )
 
 
@@ -35,6 +36,7 @@ TOPLEVEL_FIELD_MOVE_COSTS = "move_costs"
 TOPLEVEL_FIELD_BOSS_BATTLES = "boss_battles"
 TOPLEVEL_FIELD_REQUIRED_SPIRITS = "required_spirits"
 TOPLEVEL_FIELD_ITEMS = "items"
+TOPLEVEL_FIELD_DUNGEON_ENTRANCES = "dungeon_entrances"
 
 
 def validate_from_filepath(
@@ -73,6 +75,7 @@ def validate_from_dict(
         TOPLEVEL_FIELD_BOSS_BATTLES,
         TOPLEVEL_FIELD_REQUIRED_SPIRITS,
         TOPLEVEL_FIELD_ITEMS,
+        TOPLEVEL_FIELD_DUNGEON_ENTRANCES,
     ]
 
     messages["warnings"] = list()
@@ -139,6 +142,16 @@ def validate_from_dict(
             item_placement, new_wrns, new_errs = _get_item_placement(plando_data[k])
 
             parsed_data[TOPLEVEL_FIELD_ITEMS] = item_placement
+            messages_wrn.extend(new_wrns)
+            messages_err.extend(new_errs)
+
+        elif k == TOPLEVEL_FIELD_DUNGEON_ENTRANCES:
+            if plando_data[k] is not None and not isinstance(plando_data[k], dict):
+                messages_err.append(f"Top-level key has wrong data type (expected dict or null): \"{plando_data[k]}\" ({type(plando_data[k])})")
+                continue
+            dungeon_entrances, new_wrns, new_errs = _get_dungeon_entrances(plando_data[k])
+
+            parsed_data[TOPLEVEL_FIELD_DUNGEON_ENTRANCES] = dungeon_entrances
             messages_wrn.extend(new_wrns)
             messages_err.extend(new_errs)
 
@@ -1058,3 +1071,79 @@ def _get_item_placement(
                 new_errs.extend(placement_errs)
 
     return parsed_item_placement, list(new_wrns), new_errs
+
+
+def _get_dungeon_entrances(
+    dungeon_entrances: dict[str | str] | None
+) -> tuple[dict[int, int], list[str], list[str]]:
+    """
+    Validates and parses specific spirits to save for opening Star Way.
+    Any of the seven star spirits can be set, with the allowed values of
+    Eldstar, Mamar, Skolar, Muskular, Misstar, Klevar, and Kalmer, or just
+    using the chapter numbers.
+    Warnings are caused by: Valid but duplicate keys (get ignored), setting all
+    seven spirits (turns off ``Require Specific Spirits``), setting any spirit
+    at all (due to interactions with ``Require Specific Spirits`` and
+    ``Star Way Spirits Needed`` that the user should be aware of)
+    Errors are caused by: Wrong datatypes for keys or values, setting a
+    star spirit that's not recognized
+
+
+
+
+    """
+    parsed_dungeon_entrances: dict[int, int] = dict()
+
+    new_wrns: list[str] = list()
+    new_errs: list[str] = list()
+
+    if dungeon_entrances is None:
+        return parsed_dungeon_entrances, new_wrns, new_errs
+
+    allowed_keys = dungeon_entrance_locations
+    allowed_values = dungeons
+
+    for k, v in dungeon_entrances.items():
+        # Check datatypes for key
+        if not isinstance(k, str):
+            new_errs.append(f"dungeon_entrances: key has wrong data type (expected str): \"{k}\" ({type(k)})")
+            continue
+
+        # Check if key is in allowed ranges
+        if k not in allowed_keys:
+            new_errs.append(f"dungeon_entrances: found unexpected key: \"{k}\" (not one of {allowed_keys=})")
+            continue
+
+        # Check if value is unset
+        if v is None:
+            continue
+
+        # Check datatypes for value
+        if not isinstance(v, str):
+            new_errs.append(f"dungeon_entrances: values has wrong data type (expected str): \"{v}\" ({type(v)})")
+            continue
+
+        # Check if key is in allowed ranges
+        if v not in allowed_values:
+            new_errs.append(f"dungeon_entrances: found unexpected value: \"{v}\" (not one of {allowed_values=})")
+            continue
+
+        if dungeons.index(v) + 1 in parsed_dungeon_entrances.values():
+            new_errs.append(f"dungeon_entrances: dungeon \"{v}\" set multiple times")
+        else:
+            entrance_chapter: int = dungeon_entrance_locations.index(k) + 1
+            dungeon_chapter: int = dungeons.index(v) + 1
+
+            parsed_dungeon_entrances[entrance_chapter] = dungeon_chapter
+
+    if (   8 in parsed_dungeon_entrances
+        or 8 in parsed_dungeon_entrances.values()
+    ):
+        new_wrns.append(
+            f"dungeon_entrances: manually set a chapter 8 connection: "
+            "this will fail seed generation if \"Required Spirits\" is set "
+            "to \"Limit Chapter Logic\""
+        )
+
+    print(parsed_dungeon_entrances)
+    return parsed_dungeon_entrances, new_wrns, new_errs

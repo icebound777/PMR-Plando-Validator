@@ -1770,3 +1770,25 @@ merlow_badges = [
     "FlowerSaver", # FlowerSaverA
     "PowerPlus", # PowerPlusA
 ]
+
+dungeon_entrance_locations: list[str] = [
+    "PleasantPath",
+    "DryDryDesert",
+    "GustyGulch",
+    "EnterToyBox",
+    "LavalavaIsland",
+    "EnterFlowerGate",
+    "ShiverMountain",
+    "RideStarShip",
+]
+
+dungeons: list[str] = [
+    "KoopaBrosFortress",
+    "DryDryRuins",
+    "TubbasCastle",
+    "ShyGuysToybox",
+    "MtLavalava",
+    "FlowerFields",
+    "CrystalPalace",
+    "BowsersCastle",
+]

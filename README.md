@@ -40,6 +40,7 @@ At the top level, the following fields are allowed:
 * `"difficulty"`
 * `"boss_battles"`
 * `"required_spirits"`
+* `"dungeon_entrances"`
 * `"move_costs"`
 * `"item_placement"`
 
@@ -105,6 +106,39 @@ Notes:
 * Will always cause a warning, as having `Require Specific Spirits` active and setting more spirits here than are required to open Star Way will have the spirits set here overwrite the number of spirits required for Star Way
 * Will cause a warning if all 7 spirits are set as required
 * Will cause a warning if the same spirit is set multiple times
+
+### Dungeon Entrances
+
+Type: key-value-pairs
+Schema: `"X": "Y"`
+Values:
+
+* `X`: Non-dungeon location to connect a dungeon to. Allowed values:
+  * `PleasantPath`
+  * `DryDryDesert`
+  * `GustyGulch`
+  * `EnterToyBox`
+  * `LavalavaIsland`
+  * `EnterFlowerGate`
+  * `ShiverMountain`
+  * `RideStarShip`
+* `Y`: dungeon to set. Allowed values:
+  * `KoopaBrosFortress`
+  * `DryDryRuins`
+  * `TubbasCastle`
+  * `ShyGuysToybox`
+  * `MtLavalava`
+  * `FlowerFields`
+  * `CrystalPalace`
+  * `BowsersCastle`
+  * `null`
+
+Example: `"EnterFlowerGate": "DryDryRuins", "ShiverMountain": "FlowerFields", "EnterToyBox": null`
+Notes:
+
+* Setting a connection to `null`, or excluding a given connection entirely, results in the seed generator setting the dungeon entrance itself according to given settings
+* No dungeon may be set more than once
+* Linking `RideStarShip` or `BowsersCastle` to anything except each other results in a seed generation failure if `Required Spirits` is set to `Limit Chapter Logic`
 
 ### Move Costs
 
